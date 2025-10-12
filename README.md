@@ -1,45 +1,40 @@
-# i11-ui
+# i11 Registry
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+A personal collection of components, utilities, configurations, and guides for building web applications quickly without unnecessary dependencies.
 
-Run development server:
+Inspired by shadcn/ui, but streamlined and expanded beyond UI to include functionality, helpers, configurations, and guides. Opinionated, practical, and ready to use.
 
-```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
-```
+## What's Inside
 
-Open http://localhost:3000 with your browser to see the result.
+### Components
+Clean, dependency-light UI components you can drop directly into your project.
 
-## Explore
+### Functions
+Drop-in utility functions for common tasks—strings, arrays, runtime safety, and security. No need to install tiny npm packages when you can just copy the code you need.
 
-In the project, you can see:
+### Files
+Battle-tested configuration files for Biome, Tailwind, VSCode, and your terminal. Stop digging through old repos to find that config that worked perfectly.
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
+### Types
+TypeScript utilities for common type transformations and patterns. Skip the hassle of reinventing generics or frantically searching through blogs.
 
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
+### Guides
+Step-by-step instructions for setting up features like internationalization and type-safe environment variables. For when you figured something out once and don't want to make it painful again.
 
-### Fumadocs MDX
+### Cool Tricks
+Fun gimmicks you can use in your app for the joy of it.
 
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
+## Philosophy
 
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
+- **Own your code**: Copy what you need instead of installing dependencies
+- **Reduce bloat**: Avoid transitive dependencies and unnecessary supply chain risks
+- **Move fast**: Pre-configured, tested, and ready to drop into your projects
+- **Stay practical**: Opinionated choices based on real-world use
 
-## Learn More
+## Getting Started
 
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
+Browse the [documentation](https://your-site.com/docs) to see what's available and start building.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+## License
+
+MIT
