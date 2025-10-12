@@ -1,0 +1,55 @@
+---
+title: "Runtime Safety"
+description: "Utility functions for validating assumptions and handling errors gracefully."
+---
+
+## Invariant
+ 
+Throws an error if a condition is not met.
+
+```ts
+const INVARIANT_PREFIX = "Invariant failed";
+export function invariant(
+  condition: unknown,
+  message?: string | (() => string)
+): asserts condition {
+  if (condition) return;
+
+  if (isProduction) {
+    throw new Error(INVARIANT_PREFIX);
+  }
+
+  const providedMessage = typeof message === "function" ? message() : message;
+  throw new Error(providedMessage ? `${INVARIANT_PREFIX}: ${providedMessage}` : INVARIANT_PREFIX);
+}
+```
+
+## Safe Try-Catch (sync)
+
+Replaces a try-catch block containing sync code, returning `[error, result]` instead.
+
+```typescript
+export function safeTry<T, E = Error>(operation: T): [T, null] | [null, E] {
+  try {
+    const result = operation;
+    return [result, null];
+  } catch (e: unknown) {
+    return [null, e as E];
+  }
+}
+```
+
+## Safe Try-Catch (async)
+
+Replace a try-catch block containing async code, returning `Promise<[error, result]>` instead.
+
+```typescript
+export async function safeTryAsync<T, E = Error>(operation: T): [T, null] | [null, E] {
+  try {
+    const result = await operation;
+    return [result, null];
+  } catch (e: unknown) {
+    return [null, e as E];
+  }
+}
+```

@@ -1,0 +1,32 @@
+---
+title: Base
+description: Helpers for shaping, refining, simplifying, and improving the readability of types.
+---
+
+## Prettify
+
+  Takes an object type and makes the hover overlay more readable.
+
+  ```ts
+  type Prettify<T> = {
+    [K in keyof T]: T[K];
+  } & {};
+  ```
+
+## Maybe
+
+  Returns a union of the type and a potentially missing value, such as `undefined` or `null`. 
+
+  ```ts
+  type Maybe<T> = NoInfer<T | undefined | null>;
+  ```
+
+  *Note: `NoInfer` is used to provide a more readable hover overlay.*
+
+## AnyFn
+
+  Represents a function that can take any number and type of arguments and return any. Sometimes TypeScript forces you to use it in generics.
+  
+  ```ts
+  type AnyFn = (...args: any[]) => any;
+  ```

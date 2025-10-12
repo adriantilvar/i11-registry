@@ -1,0 +1,36 @@
+---
+title: Functions
+description: Focused, dependency-free utility functions for everyday development tasks.
+---
+import { Type, Brackets, ShieldAlert, Lock } from 'lucide-react';
+
+Some NPM dependencies would be hell to implement from scratch. But others are just a handful of lines you could easily write yourself. Or better yet, copy directly into your codebase. Own the code, skip the transitive dependencies, avoid unnecessary supply chain risks, and cut the bloat. 
+
+Here's some common utilities you may need:
+
+<Cards>
+  <Card 
+    icon={<Type />} 
+    title="Strings" 
+    description="Transform, format, and manipulate text." 
+    href="/docs/functions/string"
+  />
+  <Card 
+    icon={<Brackets />} 
+    title="Arrays" 
+    description="Handy helpers for working with arrays." 
+    href="/docs/functions/array"
+  />
+  <Card 
+    icon={<ShieldAlert />} 
+    title="Runtime Safety" 
+    description="Validate assumptions and handle errors gracefully." 
+    href="/docs/functions/safety"
+  />
+  <Card 
+    icon={<Lock />} 
+    title="Security" 
+    description="Handle cryptographic operations with ease." 
+    href="/docs/functions/security"
+  />
+</Cards>

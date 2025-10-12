@@ -1,0 +1,16 @@
+/** biome-ignore-all lint/suspicious/noUnknownAtRules: Tailwind-specific utilities are allowed */
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+html {
+  font-size: 100%;
+  @apply text-lg;
+}
+
+select,
+textarea,
+input,
+button {
+  font: inherit;
+}

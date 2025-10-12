@@ -1,0 +1,157 @@
+---
+title: "Internationalization"
+description: "Set up multilingual support in Next.js using sub-path routing and localized content with a clean, type-safe approach."
+---
+Next.js supports multiple languages through content localization (i18n) and internationalized routing. We'll explore how to set it up using the sub-path approach. That is, we prepend the language to every route (e.g., `/en/products`).
+
+## Walkthrough
+
+1. Install the dependencies:
+
+   ```bash
+    pnpm add negotiator @formatjs/intl-localematcher
+   ```
+
+2. Install the development-only dependencies:
+
+   ```bash
+    pnpm add -D @types/negotiator
+   ```
+
+3. Create a `config.ts` as the source of truth for you supported locales
+
+    ```ts title="i18n/config.ts"
+    export const i18n = {
+      defaultLocale: "en",
+      locales: ["en", "da"],
+    } as const;
+
+    export type Locale = (typeof i18n.locales)[number];
+    ```
+
+4.  Now we can create a function to check the if the incoming request has a supported locale in the URL
+
+    ```typescript title="i18n/verify-locale.ts" lineNumbers
+    import "server-only";
+    import type { NextRequest } from "next/server";
+    import { match } from "@formatjs/intl-localematcher";
+    import Negotiator from "negotiator";
+    import { i18n } from "@/i18n/config.ts";
+
+    const getLocale = (request: NextRequest) => {
+      const languages = new Negotiator({
+        headers: {
+          "accept-language": request.headers.get("accept-language") ?? "",
+        },
+      }).languages();
+      return match(languages, i18n.locales, i18n.defaultLocale);
+    };
+
+    const isLocaleSupported = (input: string) => {
+      if (input.length !== 2) return false;
+      const isNotSupported = i18n.locales.every((locale) => locale !== input);
+      return !isNotSupported;
+    };
+
+    export const verifyLocale = (request: NextRequest) => {
+      const { pathname } = request.nextUrl;
+      const [firstSegment, ...segments] = pathname.split("/").toSpliced(0, 1);
+      return isLocaleSupported(firstSegment)
+        ? { needsRedirect: false, redirectPath: "" }
+        : {
+            needsRedirect: true,
+            redirectPath: `/${getLocale(request)}/${firstSegment}/${segments.join("/")}`,
+          };
+    };
+    ```
+
+5. You will then use the function inside the `middleware.ts` file to check every URL for the locale:
+
+   ```typescript title="(root) middleware.ts" lineNumbers
+     import { NextRequest, NextResponse } from "next/server";
+
+     import { verifyLocale } from "@/i18n/verify-locale.ts";
+
+     export const middleware = async (request: NextRequest) => {
+       const { needsRedirect, redirectPath } = verifyLocale(request);
+
+       if (needsRedirect) {
+         request.nextUrl.pathname = redirectPath;
+         return NextResponse.redirect(request.nextUrl);
+       }
+     };
+
+     export const config = {
+       matcher: [
+         "/((?!api|_next).*)",
+         // Optional: only run on root (/) URL
+         // "/",
+       ],
+     };
+   ```
+
+6. Move all the routes from `app/` to `app/[lang]`.
+
+7. For the localization, you need to create an English dictionary:
+
+   ```json title="i18n/dictionaries/en.json"
+   {
+     "products": {
+       "cart": "Add to Cart"
+     }
+   }
+   ```
+
+8. And mirror it across the other supported languages (Danish in this case):
+
+   ```json title="i18n/dictionaries/da.json"
+   {
+     "products": {
+       "cart": "Tilføj til kurv"
+     }
+   }
+   ```
+
+9. Finally, create a function to load the translations for the requested locale:
+
+   ```typescript title="i18n/get-dictionary.ts" lineNumbers
+    import "server-only";
+    import type { Locale } from "@/i18n/config.ts";
+
+    type Dictionary = { landing: { hello: string } };
+
+    const dictionaries: { [key in Locale]: () => Promise<Dictionary> } = {
+      en: () =>
+        import("@/i18n/dictionaries/en.json").then((module) => module.default),
+      da: () =>
+        import("@/i18n/dictionaries/da.json").then((module) => module.default),
+    };
+
+    export const getDictionary = async (locale: Locale) =>
+      dictionaries[locale]() ?? dictionaries.en();
+   ```
+
+10. Starting now, you can use the `getDictionary` function (preferably inside server components):
+
+    ```tsx title="app/[lang]/page.tsx"
+    import { getDictionary } from "@/i18n/get-dictionary.ts";
+    import { type Locale } from "@/i18n/config.ts";
+
+    export default async function Home({
+      params,
+    }: {
+      params: Promise<{
+        lang: Locale;
+      }>;
+    }) {
+      const locale = (await params).lang;
+      const { marketing } = await getDictionary(locale);
+
+      return (
+        <main>
+          <h1>{marketing.title}</h1>
+          ...
+        </main>
+      );
+    }
+    ```

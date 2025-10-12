@@ -1,0 +1,51 @@
+---
+title: Arrays
+description: Helpers for constraining, transforming, and reasoning about arrays.
+---
+
+
+## NonEmpty
+
+  An `Array` utility that ensures an an array has at least one element in it.
+
+  ```ts
+  type NonEmpty<T> = [T, ...Array<T>];
+  ```
+
+## UniqueElements
+
+  An `Array` utility that returns a union of the unique elements of an array.
+
+  ```ts
+  type UniqueElements<T extends unknown[]> = T[number];
+  ```
+
+## DuplicateElements
+
+  An `Array` utility that returns a union of the duplicate elements found in an array.
+
+  ```ts
+  type DuplicateElements<
+    T extends unknown[],
+   Seen = never,
+    Duplicates = never,
+  > = T extends [infer First, ...infer Rest]
+   ? First extends Seen
+     ? DuplicateElements<Rest, Seen, Duplicates | First>
+     : DuplicateElements<Rest, Seen | First, Duplicates>
+   : Duplicates;
+  ```
+
+## UniqueArray
+
+  An `Array` utility that ensures an array can contain only unique elements.
+
+  ```ts
+  declare const brand: unique symbol;
+  type ValidElements<T> = [T] & { [brand]: "ValidElements" };
+
+  type UniqueArray<T extends unknown[]> =
+    DuplicateElements<T> extends never ? T : ValidElements<UniqueElements<T>>;
+  ```
+
+  *Note: Branded types are used to provide a more readable hover overlay.*

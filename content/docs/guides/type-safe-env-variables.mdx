@@ -1,0 +1,100 @@
+---
+title: "Type-Safe Environment Variables"
+description: "Validate and safely use environment variables in Next.js using Zod to ensure type safety and prevent runtime errors."
+---
+
+Next.js loads environment variables automatically, but sometimes they might be missing when the application runs, or you might need them in a specific type. To prevent common issues when working with environment variables, you can use Zod for validation.
+
+## Walkthrough
+
+1.  Install the dependencies:
+
+    ```bash
+    pnpm add zod
+    ```
+
+2.  Create the server environment variables validation:
+
+    ```typescript title="env/server.ts" lineNumbers
+    import { z } from "zod";
+
+    // Create Zod schema with your environment variables
+    const EnvSchema = z.object({
+      NODE_ENV: z.enum(["development", "production"]),
+    });
+
+    let env: z.infer<typeof EnvSchema>;
+
+    try {
+      env = EnvSchema.parse(process.env);
+    } catch (e) {
+      const error = e as z.ZodError;
+
+      console.error("🚫 Invalid server environment variables:");
+      console.error(error.flatten().fieldErrors);
+      process.exit(1);
+    }
+
+    export default env;
+    ```
+
+3.  If you are using environment variables on the client as well, you can validate them separately:
+
+    ```typescript title="env/client.ts" lineNumbers
+    import { z } from "zod";
+
+    const EnvSchema = z.object({
+      BASE_URL: z.string(),
+    });
+
+    let env: z.infer<typeof EnvSchema>;
+
+    try {
+      env = EnvSchema.parse({
+        // Grab the environment variables from the bundled by Next.js
+        BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+      });
+    } catch (e) {
+      const error = e as z.ZodError;
+
+      console.error("🚫 Invalid client environment variables:");
+      console.error(error.flatten().fieldErrors);
+      process.exit(1);
+    }
+
+    export default env;
+    ```
+
+4.  Import the files to auto-validate the environment variables on startup:
+
+    ```typescript title="next.config.ts"
+    import type { NextConfig } from "next";
+
+    import "@/env/client.ts";
+    import "@/env/server.ts";
+
+    const nextConfig: NextConfig = {
+      /* config options here */
+    };
+
+    export default nextConfig;
+    ```
+
+    If you are using a ```next.config.mjs``` file, you need to use something like _jiti_:
+
+    ```javascript title="next.config.mjs"
+    import createJiti from "jiti";
+    import { fileURLToPath } from "node:url";
+
+    const jiti = createJiti(fileURLToPath(import.meta.url));
+    jiti("./app/env");
+
+    /** @type {import('next').NextConfig} */
+    export default {
+      /** ... */
+    };
+    ```
+
+5.  Prevent using ```process.env``` directly in your code 
+
+    This can be done either with ```eslint-plugin-n``` or Biome's ```noProcessEnv``` rule.

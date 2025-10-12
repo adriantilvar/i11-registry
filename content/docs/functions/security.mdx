@@ -1,0 +1,36 @@
+---
+title: "Security"
+description: "Utility functions for handling cryptographic operations with ease."
+---
+
+## Compute File Checksum
+
+Computes the checksum of a file using SHA-256.
+
+```typescript
+export async function computeSHA256 = async (file: File) {
+  const arrayBuffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+
+  return hashHex;
+};
+```
+
+## Generate Strong Name
+
+Generate a cryptographically strong name using random values.
+
+```typescript
+export function generateStrongName(bytes = 32) {
+  const array = new Uint8Array(bytes);
+  crypto.getRandomValues(array);
+
+  return [...array]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+};
+```

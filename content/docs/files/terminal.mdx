@@ -1,0 +1,52 @@
+---
+title: Terminal Config
+description: Zsh configuration with a custom prompt, Git branch display, and environment setups.
+---
+
+```bash title="~/.zshrc"
+# Find and set branch name if in git repository.
+function git_branch_name()
+{
+  branch=$(git symbolic-ref HEAD 2> /dev/null | awk 'BEGIN{FS="/"} {print $NF}')
+  if [[ $branch == "" ]];
+  then
+    :
+  else
+    echo " [%F{#66A0C8}$branch%f]"
+  fi
+}
+
+# Enable autocomplete
+autoload -Uz compinit && compinit
+
+# Enable substitution in the prompt.
+setopt prompt_subst
+
+# Config for prompt (PS1 synonym)
+current_folder='%F{#EC8B49}%1/%f'
+prompt='mb-air@${current_folder}$(git_branch_name)$ '
+
+# Aliases
+alias py="python3"
+alias pip="pip3"
+alias pn="pnpm"
+alias pnx="pnpx"
+
+# Homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/adriantilvar/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# Node
+export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
+
+# Deno
+. "/Users/adriantilvar/.deno/env"
