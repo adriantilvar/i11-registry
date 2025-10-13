@@ -48,7 +48,8 @@
       "files": [
         {
           "path": "registry/new-york/styles/globals.css",
-          "type": "registry:style"
+          "type": "registry:style",
+          "target": "styles/globals.css"
         }
       ]
     },
