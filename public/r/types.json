@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "types",
+  "type": "registry:file",
+  "title": "Types",
+  "description": "Reusable types across the project",
+  "dependencies": [],
+  "files": [
+    {
+      "path": "src/types/base.ts",
+      "content": "export type Maybe<T> = NoInfer<T | undefined | null>;\n",
+      "type": "registry:file",
+      "target": "src/types/base.ts"
+    },
+    {
+      "path": "src/types/array.ts",
+      "content": "export type NonEmptyArray<T> = [T, ...Array<T>];\n\ntype DuplicateElements<\n  T extends unknown[],\n  Seen = never,\n  Duplicates = never,\n> = T extends [infer First, ...infer Rest]\n  ? First extends Seen\n    ? DuplicateElements<Rest, Seen, Duplicates | First>\n    : DuplicateElements<Rest, Seen | First, Duplicates>\n  : Duplicates;\n\ntype UniqueElements<T extends unknown[]> = T[number];\n\ndeclare const brand: unique symbol;\n\ntype ValidElements<T> = [T] & { [brand]: \"ValidElements\" };\n\nexport type UniqueArray<T extends unknown[]> =\n  DuplicateElements<T> extends never ? T : ValidElements<UniqueElements<T>>;\n",
+      "type": "registry:file",
+      "target": "src/types/array.ts"
+    }
+  ]
+}

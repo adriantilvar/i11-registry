@@ -8,7 +8,7 @@
     "zod@4.1.12"
   ],
   "registryDependencies": [
-    "https://i11-registry.vercel.app/r/lib.json"
+    "https://i11-registry.vercel.app/r/types.json"
   ],
   "files": [
     {

@@ -21,6 +21,25 @@
       ]
     },
     {
+      "name": "types",
+      "type": "registry:file",
+      "title": "Types",
+      "description": "Reusable types across the project",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "src/types/base.ts",
+          "type": "registry:file",
+          "target": "src/types/base.ts"
+        },
+        {
+          "path": "src/types/array.ts",
+          "type": "registry:file",
+          "target": "src/types/array.ts"
+        }
+      ]
+    },
+    {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
@@ -40,7 +59,7 @@
       "title": "Query Strings Hook",
       "description": "Hooks for managing URL query parameters in Next.js",
       "dependencies": ["zod@4.1.12"],
-      "registryDependencies": ["https://i11-registry.vercel.app/r/lib.json"],
+      "registryDependencies": ["https://i11-registry.vercel.app/r/types.json"],
       "files": [
         {
           "path": "registry/hooks/use-query-state.ts",
