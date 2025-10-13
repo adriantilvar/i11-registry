@@ -32,7 +32,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "content/docs/types/index.mdx",
-    "content/docs/components/functions/index.mdx"
+    "content/docs/components/functions/index.mdx",
+    "content/docs/react-hooks/index.mdx"
   ],
   "exclude": ["node_modules"]
 }

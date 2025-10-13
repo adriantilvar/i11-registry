@@ -1,0 +1,202 @@
+---
+title: Query Strings
+description: Lightweight hooks for managing URL query parameters in Next.js with type safety, defaults, and validation.
+---
+
+## Key Features
+- Type-safe query parameter management
+- Automatic default value handling
+- Optional Zod schema validation
+- Batched updates for multiple parameters
+
+## useQueryString
+
+Manages a single URL query parameter with optional defaults and validation.
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `key` | `string` | The name of the query parameter to track |
+| `options` | `UseQueryStateOptions` | Optional configuration object |
+
+
+### Returns
+
+| Name | Type | Description |
+|------|------|-------------|
+| Current value | `string \| null \| undefined` | The current query parameter value, or `null`/`undefined` if not present and no default provided |
+| Setter function | `(value: string) => void` | Updates the query parameter using client-side navigation |
+
+### Basic Usage
+
+```tsx
+function SearchPage() {
+  const [query, setQuery] = useQueryString('q');
+  
+  return <div> ... </div>;
+}
+```
+
+**With Default Value**
+
+```tsx
+function ProductList() {
+  const [sort, setSort] = useQueryString('sort', {
+    defaultValue: 'name'
+  });
+  // URL: /products?sort=price → sort will be 'price'
+  // URL: /products → sort will be 'name' → /products?sort=name
+  
+  return <div> ... </div>;
+}
+```
+
+**With Validation Schema**
+
+```tsx
+import { z } from 'zod';
+
+function FilteredList() {
+  const [status, setStatus] = useQueryString('status', {
+    defaultValue: 'active',
+    schema: z.enum(['active', 'inactive', 'pending'])
+  });
+  
+  // Invalid values will fall back to 'active'
+  // URL: /items?status=waiting → status will be 'active'
+  
+  return <div> ... </div>;
+}
+```
+
+## useQueryStrings
+
+Manages multiple URL query parameters simultaneously with batched updates.
+
+
+### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `keys` | `string[]` | Array of unique query parameter names to track |
+| `options` | `Record<string, UseQueryStateOptions>` | Per-key configuration options |
+
+### Returns
+
+| Name | Type | Description |
+|------|------|-------------|
+| Current values | `Record<string, string \| null \| undefined>` | Object mapping each key to its current value |
+| Setter function | `(key: string, value: string) => void` | Updates a specific query parameter using client-side navigation |
+
+### Basic Usage
+
+```tsx
+function SearchFilters() {
+  const [filters, setFilter] = useQueryStrings(['sort', 'category', 'minPrice']);
+
+  console.log(filters.sort);
+  // name
+  
+  return <div> ... </div>;
+}
+```
+
+**With Per-Key Options**
+
+```tsx
+function AdvancedFilters() {
+  const [filters, setFilter] = useQueryStrings(
+    ['page', 'sort'],
+    {
+      page: {
+        defaultValue: '1',
+        schema: z.coerce.number().min(1).transform(String)
+      },
+      sort: {
+        defaultValue: 'name',
+        schema: z.enum(['name', 'price', 'date'])
+      }
+    }
+  );
+  
+  return <div> ... </div>;
+}
+```
+
+## Options Config
+
+```ts
+type UseQueryStateOptions = {
+  defaultValue?: string;
+  schema?: z.ZodType<string>;
+  onParseError?: "fallback" | "remove";
+}
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `defaultValue` | `string` | `undefined` | Fallback value when parameter is missing, empty, or fails validation |
+| `schema` | `z.ZodType<string>` | `undefined` | Zod schema for validating parameter values (must return a string) |
+| `onParseError` | `"fallback" \| "remove"` | `"fallback"` | Behavior when validation fails: use `defaultValue` or remove parameter |
+
+## Schema Validation
+
+The `onParseError` option controls what happens when schema validation fails:
+
+- `"fallback"` (default)
+
+Uses `defaultValue` if provided, otherwise removes the parameter.
+
+```tsx
+const [status, setStatus] = useQueryString('status', {
+  defaultValue: 'active',
+  schema: z.enum(['active', 'inactive']),
+  onParseError: 'fallback'
+});
+
+// URL: /page?status=invalid → status becomes 'active'
+```
+
+- `"remove"`
+Always removes the parameter on validation failure.
+
+```tsx
+const [status, setStatus] = useQueryString('status', {
+  schema: z.enum(['active', 'inactive']),
+  onParseError: 'remove'
+});
+
+// URL: /page?status=invalid → parameter is removed from URL
+```
+
+Validation schemas must return a string to maintain URLSearchParams compatibility:
+
+```tsx
+// ✅ Valid schemas
+z.string()
+z.enum(['option1', 'option2'])
+z.coerce.number().transform(String)
+z.string().regex(/pattern/)
+
+// ❌ Invalid schemas (don't return strings)
+z.number()
+z.boolean()
+z.object({})
+```
+
+## Notes
+
+**React Compiler Assumption**
+
+These hooks are not memoized internally. They assume you're using the React Compiler, which automatically optimizes component re-renders.
+
+**Null vs Empty String**
+
+- When no query parameter exists and no default is provided, the value will be `null`
+- Setting a value to an empty string (`''`) removes the parameter from the URL
+- Default values are applied when parameters are missing, empty, or fail validation
+
+**Query Parameter Deduplication**
+
+Duplicate query parameters (e.g., `?step=goal&step=persona`) are not officially supported. While the hooks may deduplicate in some cases, this behavior should not be relied upon.
