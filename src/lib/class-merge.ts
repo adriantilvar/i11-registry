@@ -1,5 +1,11 @@
 import { twMerge } from "tailwind-merge";
-import type { ClassValue } from "./types.ts";
+
+export type ClassValue =
+  | string
+  | Record<string, boolean>
+  | boolean
+  | null
+  | undefined;
 
 export function cx(...inputs: ClassValue[]): string {
   let result = "";

@@ -1,5 +1,4 @@
-import { cx } from "./class-merge";
-import type { ClassValue } from "./types";
+import { type ClassValue, cx } from "./class-merge";
 
 /**
  * Type utility to extract the props type from a variant selection function.
