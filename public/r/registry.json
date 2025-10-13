@@ -1,0 +1,52 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "i11 registry",
+  "homepage": "https://i11-registry.vercel.app/",
+  "items": [
+    {
+      "name": "lib",
+      "type": "registry:lib",
+      "title": "Library",
+      "description": "Reusable code across the project",
+      "dependencies": ["tailwind-merge"],
+      "files": [
+        {
+          "path": "src/lib/class-merge.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "src/lib/create-variants.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A basic button component",
+      "dependencies": ["@radix-ui/react-slot"],
+      "registryDependencies": ["https://i11-registry.vercel.app/r/lib.json"],
+      "files": [
+        {
+          "path": "registry/new-york/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "use-query-state",
+      "type": "registry:hook",
+      "title": "Query Strings Hook",
+      "description": "Hooks for managing URL query parameters in Next.js",
+      "dependencies": ["zod@4.1.12"],
+      "registryDependencies": ["https://i11-registry.vercel.app/r/lib.json"],
+      "files": [
+        {
+          "path": "registry/hooks/use-query-state.ts",
+          "type": "registry:hook"
+        }
+      ]
+    }
+  ]
+}

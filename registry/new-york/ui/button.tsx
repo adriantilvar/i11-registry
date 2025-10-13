@@ -1,4 +1,3 @@
-//TODO: remove radix-ui/react-slot
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/class-merge";
 import { createVariants, type VariantProps } from "@/lib/create-variants";

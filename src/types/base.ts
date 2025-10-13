@@ -4,3 +4,5 @@ export type ClassValue =
   | boolean
   | null
   | undefined;
+
+export type Maybe<T> = NoInfer<T | undefined | null>;
