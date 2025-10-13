@@ -40,12 +40,28 @@
       ]
     },
     {
+      "name": "globals",
+      "type": "registry:style",
+      "title": "Global Styles",
+      "description": "Global styles for the application",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/styles/globals.css",
+          "type": "registry:style"
+        }
+      ]
+    },
+    {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
       "description": "A basic button component",
       "dependencies": ["@radix-ui/react-slot"],
-      "registryDependencies": ["https://i11-registry.vercel.app/r/lib.json"],
+      "registryDependencies": [
+        "https://i11-registry.vercel.app/r/lib.json",
+        "https://i11-registry.vercel.app/r/globals.json"
+      ],
       "files": [
         {
           "path": "registry/new-york/ui/button.tsx",
